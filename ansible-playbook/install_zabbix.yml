@@ -1,0 +1,211 @@
+- name: Instala Zabbix agent nos hosts 
+  hosts: all
+  become: True
+
+  tasks:
+    #- name: Remove ceph-osd repo
+    #  command: subscription-manager repos --disable=rhel-7-server-rhceph-2-osd-rpms 
+
+    #- name: Remove ceph-mon repo
+    #  command: subscription-manager repos --disable=rhel-7-server-rhceph-2-mon-rpms
+
+    - name: Instalando o repositorio rpm do zabbix
+      yum:
+        #name: http://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-release-3.4-2.el7.noarch.rpm
+        name: http://repo.zabbix.com/zabbix/3.2/rhel/7/x86_64/zabbix-release-3.2-1.el7.noarch.rpm
+        state: present
+
+    #- name: Instalando impitool
+    #  yum:
+    #    name: ipmitool
+    #    state: latest
+
+    - name: Instalando o zabbix_agent
+      yum:
+        name: zabbix-agent
+        state: latest
+
+    - name: copiando o arquivo de configuracao do zabbix
+      template: 
+        src: /home/stack/ansible/templates/zabbix-agent/zabbix_agentd.conf.j2 
+        dest: /etc/zabbix/zabbix_agentd.conf 
+        owner: root 
+        group: root 
+        mode: "u=rw,g=r,o=r"
+      notify: 
+        - restart zabbix_agentd
+
+    - name: liberando regra de FW
+      iptables:
+        action: insert
+        state:  present
+        chain: INPUT
+        protocol: tcp
+        match: tcp
+        destination_port: 10050
+        comment: Libera acesso a porta do Zabbix Agent
+        jump: ACCEPT
+
+    - name: adicionando a regra de FW persistente
+      lineinfile: 
+        path: /etc/sysconfig/iptables
+        state: present
+        insertafter: '.*000 accept related established rules.*'
+        regexp: '.*Libera acesso a porta do Zabbix Agent.*' 
+        line: '-A INPUT -p tcp -m tcp --dport 10050 -m comment --comment "Libera acesso a porta do Zabbix Agent" -j ACCEPT'
+
+    - name: copiando regras de selinux
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/selinux/zabbix_agent.pp
+        dest: /tmp/zabbix_agent.pp
+   
+    - name: aplicando regras de selinux
+      command: semodule -i /tmp/zabbix_agent.pp
+
+    - name: Creates directory custom
+      file: path=/etc/zabbix/custom state=directory
+
+    - name: Creates directory scripts
+      file: path=/etc/zabbix/scripts state=directory
+
+    - name: enable zabbix-agent service
+      service: name=zabbix-agent enabled=yes
+
+    - name: Make sure zabbix-agent is running
+      systemd: state=started name=zabbix-agent
+
+  handlers:
+    - name: restart zabbix_agentd
+      service: 
+        name: zabbix-agent
+        state: restarted 
+
+- name: Instala UserParameters nos controllers
+  hosts: control
+  become: True
+  tasks:
+    - name: copiando script sudoers pcs
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/sudoers.d/zabbix_pcs
+        dest: /etc/sudoers.d/zabbix_pcs
+        owner: root
+        group: root
+        mode: "u=r,g=r,o=r"
+
+    - name: copiando script galera
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/scripts/show_wsrep_status.sh
+        dest: /etc/zabbix/scripts/show_wsrep_status.sh
+
+    - name: instala userparameter nos controllers
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/custom/control/
+        dest: /etc/zabbix/custom/
+        mode: "u=rw,g=r,o=r"
+        directory_mode: true
+      notify:
+        - restart zabbix_agentd
+
+  handlers:
+    - name: restart zabbix_agentd
+      service: 
+        name: zabbix-agent
+        state: restarted 
+
+- name: Instala UserParameters nos storage
+  hosts: ceph-storage
+  become: True
+  tasks:
+    - name: copiando userparameters storage ... 
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/custom/ceph/
+        dest: /etc/zabbix/custom/
+        mode: "u=rw,g=r,o=r"
+        directory_mode: true
+      notify:
+        - restart zabbix_agentd
+
+    - name: copiando script sudoers ceph
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/sudoers.d/zabbix_ceph
+        dest: /etc/sudoers.d/zabbix_ceph
+        owner: root
+        group: root
+        mode: "u=r,g=r,o=r"
+
+  handlers:
+    - name: restart zabbix_agentd
+      service:
+        name: zabbix-agent
+        state: restarted
+
+- name: Instala UserParameters nos ryu
+  hosts: ryu
+  become: True
+  tasks:
+    - name: copiando userparameters ryu ... 
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/custom/ryu/
+        dest: /etc/zabbix/custom/
+        mode: "u=rw,g=r,o=r"
+        directory_mode: true
+      notify:
+        - restart zabbix_agentd
+
+    - name: copiando scripts ryu ...
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/scripts/ryu/
+        dest: /etc/zabbix/scripts/
+        directory_mode: true
+        mode: "u=rwx,g=r,o=r"
+        owner: zabbix
+
+  handlers:
+    - name: restart zabbix_agentd
+      service:
+        name: zabbix-agent
+        state: restarted
+
+
+- name: Instala UserParameters nos compute
+  hosts: compute
+  become: True
+  tasks:
+    - name: copiando scripts compute ...
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/scripts/compute/
+        dest: /etc/zabbix/scripts/
+        directory_mode: true
+        owner: zabbix
+        mode: "u=rwx,g=r,o=r"
+      tags:
+        - agora
+    
+    - name: copiando sudoers file compute...
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/sudoers.d/compute/
+        dest: /etc/sudoers.d/
+        directory_mode: true
+        owner: root
+        group: root
+        mode: "u=r,g=r,o=r"
+      tags:
+        - agora
+
+    - name: copiando userparmeters compute ...
+      copy:
+        src: /home/stack/ansible/templates/zabbix-agent/custom/compute/
+        dest: /etc/zabbix/custom/
+        mode: "u=rw,g=r,o=r"
+        directory_mode: true
+      notify:
+        - restart zabbix_agentd
+      tags:
+        - agora
+
+  handlers:
+    - name: restart zabbix_agentd
+      service: 
+        name: zabbix-agent
+        state: restarted 
+

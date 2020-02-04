@@ -1,0 +1,1 @@
+allow zabbix_agent_t cyphesis_port_t:tcp_socket name_connect;

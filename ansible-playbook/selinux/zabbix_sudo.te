@@ -1,0 +1,12 @@
+
+module zabbix_sudo 1.0;
+
+require {
+	type zabbix_agent_t;
+	class unix_dgram_socket write;
+	class netlink_audit_socket { read write };
+}
+
+#============= zabbix_agent_t ==============
+allow zabbix_agent_t self:netlink_audit_socket { read write };
+allow zabbix_agent_t self:unix_dgram_socket write;

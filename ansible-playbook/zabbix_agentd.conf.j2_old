@@ -1,0 +1,9 @@
+PidFile=/var/run/zabbix/zabbix_agentd.pid
+LogFile=/var/log/zabbix/zabbix_agentd.log
+EnableRemoteCommands=1
+LogFileSize=0
+Server=127.0.0.1,x.y.z.w
+ServerActive=127.0.0.1,x.y.z.w
+Hostname={{server_name}}
+Include=/etc/zabbix/zabbix_agentd.d/*.conf
+

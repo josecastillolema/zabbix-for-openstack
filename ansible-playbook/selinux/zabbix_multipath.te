@@ -1,0 +1,14 @@
+
+module zabbix_multipath 1.2;
+
+require {
+	type lvm_control_t;
+	type zabbix_agent_t;
+	class chr_file { ioctl open read write };
+	class capability sys_admin;
+}
+
+#============= zabbix_agent_t ==============
+allow zabbix_agent_t lvm_control_t:chr_file { ioctl open read write };
+allow zabbix_agent_t self:capability sys_admin;
+

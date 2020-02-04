@@ -1,0 +1,68 @@
+
+module zabbix_agent 1.9;
+
+require {
+        type cluster_exec_t;
+        type cluster_tmpfs_t;
+        type cyphesis_port_t;
+        type devlog_t;
+	type fixed_disk_device_t;
+	type ifconfig_exec_t;
+        type iscsid_exec_t;
+        type kernel_t;
+        type ldconfig_exec_t;
+        type lvm_control_t;
+        type lvm_etc_t;
+	type lvm_exec_t;
+	type lvm_lock_t;
+	type lvm_t;
+	type selinux_config_t;
+        type sudo_exec_t;
+        type tmp_t;
+	type udev_var_run_t;
+	type unreserved_port_t;
+	type virsh_exec_t;
+	type virt_etc_t;
+        type zabbix_agent_t;
+
+	class blk_file { read open ioctl };
+        class capability { audit_write sys_resource sys_admin dac_override sys_rawio };
+        class chr_file { ioctl open read write };
+        class dir { write add_name };
+        class file { execute execute_no_trans read write open getattr create };
+        class netlink_audit_socket { read write create nlmsg_relay };
+	class process { execmem ptrace setfscreate };
+        class sock_file write;
+        class tcp_socket name_connect;
+        class unix_dgram_socket { write connect create sendto };
+	class unix_stream_socket connectto;
+}
+
+#============= zabbix_agent_t ==============
+allow zabbix_agent_t cluster_exec_t:file { execute execute_no_trans };
+allow zabbix_agent_t cluster_tmpfs_t:file { open read write };
+allow zabbix_agent_t cyphesis_port_t:tcp_socket name_connect;
+allow zabbix_agent_t devlog_t:sock_file write;
+allow zabbix_agent_t fixed_disk_device_t:blk_file { read open ioctl };
+allow zabbix_agent_t ifconfig_exec_t:file { execute execute_no_trans };
+allow zabbix_agent_t iscsid_exec_t:file { execute execute_no_trans };
+allow zabbix_agent_t kernel_t:unix_dgram_socket sendto;
+allow zabbix_agent_t ldconfig_exec_t:file { execute execute_no_trans };
+allow zabbix_agent_t lvm_control_t:chr_file { ioctl open read write };
+allow zabbix_agent_t lvm_etc_t:file { read open };
+allow zabbix_agent_t lvm_exec_t:file { execute execute_no_trans };
+allow zabbix_agent_t lvm_lock_t:dir write;
+allow zabbix_agent_t lvm_t:unix_stream_socket connectto;
+allow zabbix_agent_t self:capability { audit_write sys_resource dac_override sys_admin sys_rawio };
+allow zabbix_agent_t self:netlink_audit_socket { read write create nlmsg_relay };
+allow zabbix_agent_t self:process { execmem ptrace setfscreate };
+allow zabbix_agent_t self:unix_dgram_socket { write connect create };
+allow zabbix_agent_t selinux_config_t:file read;
+allow zabbix_agent_t sudo_exec_t:file { execute execute_no_trans };
+allow zabbix_agent_t tmp_t:dir { add_name write };
+allow zabbix_agent_t tmp_t:file { create write };
+allow zabbix_agent_t udev_var_run_t:file { read open };
+allow zabbix_agent_t unreserved_port_t:tcp_socket name_connect;
+allow zabbix_agent_t virsh_exec_t:file { execute execute_no_trans };
+allow zabbix_agent_t virt_etc_t:file { read open };
+

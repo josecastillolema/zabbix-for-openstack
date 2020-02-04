@@ -1,0 +1,27 @@
+
+module zabbix_agent 1.0;
+
+require {
+	type kernel_t;
+	type devlog_t;
+	type iscsid_exec_t;
+	type sudo_exec_t;
+	type zabbix_agent_t;
+	class sock_file write;
+	class capability { audit_write sys_resource };
+	class unix_dgram_socket { connect create sendto };
+	class file { execute execute_no_trans };
+	class netlink_audit_socket { create nlmsg_relay };
+}
+
+#============= zabbix_agent_t ==============
+allow zabbix_agent_t devlog_t:sock_file write;
+allow zabbix_agent_t iscsid_exec_t:file { execute execute_no_trans };
+
+#!!!! The file '/dev/log' is mislabeled on your system.  
+#!!!! Fix with $ restorecon -R -v /dev/log
+allow zabbix_agent_t kernel_t:unix_dgram_socket sendto;
+allow zabbix_agent_t self:capability { audit_write sys_resource };
+allow zabbix_agent_t self:netlink_audit_socket { create nlmsg_relay };
+allow zabbix_agent_t self:unix_dgram_socket { connect create };
+allow zabbix_agent_t sudo_exec_t:file { execute execute_no_trans };
