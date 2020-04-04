@@ -41,6 +41,6 @@ Besides this, we have another separated Zabbix server specifically to monitor ca
  - North-South traffic
  - etc.
  
-The templates will surely need some customization work to adapt to each client environment. They include an Ansible playbook to automate the Zabbix agent installation along with firewall liberations, sudoers file customizations, Zabbix user agents and corresponding scripts, SELinux policies, etc.
+The templates will surely need some customization work to adapt to each customer environment. They include an Ansible playbook to automate the Zabbix agent installation along with firewall liberations, sudoers file customizations, Zabbix user agents and corresponding scripts, SELinux policies, etc.
 
 I hope it helps.
