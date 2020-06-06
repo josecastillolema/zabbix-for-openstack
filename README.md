@@ -1,5 +1,5 @@
 # zabbix-for-openstack
-Zabbix templates customization for OpenStack (through Zabbix user parameters).
+Zabbix templates for OpenStack (through Zabbix user parameters).
 
 In the following screenshot you can see the final result:
 
