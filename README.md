@@ -1,4 +1,4 @@
-# [zabbix-for-openstack](https://github.com/josecastillolema/zabbix-for-openstack)
+# zabbix-for-openstack
 Zabbix templates for OpenStack (through Zabbix user parameters).
 
 In the following screenshot you can see the final result:
