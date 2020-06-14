@@ -1,5 +1,5 @@
 # zabbix-for-openstack
-Zabbix templates for OpenStack (through Zabbix [**user parameters**](https://www.zabbix.com/documentation/3.4/manual/config/items/userparameters)).
+Zabbix templates for OpenStack (through Zabbix [user parameters](https://www.zabbix.com/documentation/3.4/manual/config/items/userparameters)).
 
 In the following screenshot you can see the final result:
 ![Zabbix screenshot](https://raw.githubusercontent.com/josecastillolema/zabbix-for-openstack/master/img/pastedImage_1.png)
