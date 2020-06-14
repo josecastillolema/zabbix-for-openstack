@@ -2,7 +2,6 @@
 Zabbix templates for OpenStack (through Zabbix `user parameters`).
 
 In the following screenshot you can see the final result:
-
 ![Zabbix screenshot](https://raw.githubusercontent.com/josecastillolema/zabbix-for-openstack/master/img/pastedImage_1.png)
 
 As you can see, hosts are segregated by groups (controllers, compute, ceph, external Horizon, IdM, storage, etc.), and the items we monitore in each group are different.
