@@ -1,6 +1,8 @@
 ![GitHub](https://img.shields.io/github/license/josecastillolema/zabbix-for-openstack)
 ![GitHub language count](https://img.shields.io/github/languages/count/josecastillolema/zabbix-for-openstack)
 ![GitHub top language](https://img.shields.io/github/languages/top/josecastillolema/zabbix-for-openstack)
+[![Requirements Status](https://requires.io/github/josecastillolema/zabbix-for-openstack/requirements.svg?branch=master)](https://requires.io/github/josecastillolema/zabbix-for-openstack/requirements/?branch=master)
+
 
 # zabbix-for-openstack
 Ansible playbook for installing Zabbix and its templates for OpenStack (through Zabbix [user parameters](https://www.zabbix.com/documentation/3.4/manual/config/items/userparameters)).
