@@ -1,3 +1,7 @@
+![GitHub](https://img.shields.io/github/license/josecastillolema/mini-nfv)
+![GitHub language count](https://img.shields.io/github/languages/count/josecastillolema/josecastillolema.github.io)
+![GitHub top language](https://img.shields.io/github/languages/top/josecastillolema/josecastillolema.github.io)
+
 # zabbix-for-openstack
 Zabbix templates for OpenStack (through Zabbix [user parameters](https://www.zabbix.com/documentation/3.4/manual/config/items/userparameters)).
 
