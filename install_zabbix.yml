@@ -1,4 +1,4 @@
-- name: Instala Zabbix agent nos hosts 
+- name: Instala Zabbix agent nos hosts
   hosts: all
   become: True
 
@@ -23,16 +23,16 @@
     - name: Instalando o zabbix_agent
       yum:
         name: zabbix-agent
-        state: latest
+        state: present
 
     - name: copiando o arquivo de configuracao do zabbix
-      template: 
-        src: /home/stack/ansible/templates/zabbix-agent/zabbix_agentd.conf.j2 
-        dest: /etc/zabbix/zabbix_agentd.conf 
-        owner: root 
-        group: root 
+      template:
+        src: /home/stack/ansible/templates/zabbix-agent/zabbix_agentd.conf.j2
+        dest: /etc/zabbix/zabbix_agentd.conf
+        owner: root
+        group: root
         mode: "u=rw,g=r,o=r"
-      notify: 
+      notify:
         - restart zabbix_agentd
 
     - name: liberando regra de FW
@@ -47,20 +47,27 @@
         jump: ACCEPT
 
     - name: adicionando a regra de FW persistente
-      lineinfile: 
+      lineinfile:
         path: /etc/sysconfig/iptables
         state: present
         insertafter: '.*000 accept related established rules.*'
-        regexp: '.*Libera acesso a porta do Zabbix Agent.*' 
+        regexp: '.*Libera acesso a porta do Zabbix Agent.*'
         line: '-A INPUT -p tcp -m tcp --dport 10050 -m comment --comment "Libera acesso a porta do Zabbix Agent" -j ACCEPT'
+
+    - name: cheking presence of selinux rules file
+      stat:
+        path: selinux/zabbix_agent.pp
+      register: stat_pp
 
     - name: copiando regras de selinux
       copy:
-        src: /home/stack/ansible/templates/zabbix-agent/selinux/zabbix_agent.pp
+        src: selinux/zabbix_agent.pp
         dest: /tmp/zabbix_agent.pp
-   
+      when: stat_pp
+
     - name: aplicando regras de selinux
       command: semodule -i /tmp/zabbix_agent.pp
+      when: stat_pp
 
     - name: Creates directory custom
       file: path=/etc/zabbix/custom state=directory
@@ -76,9 +83,9 @@
 
   handlers:
     - name: restart zabbix_agentd
-      service: 
+      service:
         name: zabbix-agent
-        state: restarted 
+        state: restarted
 
 - name: Instala UserParameters nos controllers
   hosts: control
@@ -108,15 +115,15 @@
 
   handlers:
     - name: restart zabbix_agentd
-      service: 
+      service:
         name: zabbix-agent
-        state: restarted 
+        state: restarted
 
 - name: Instala UserParameters nos storage
   hosts: ceph-storage
   become: True
   tasks:
-    - name: copiando userparameters storage ... 
+    - name: copiando userparameters storage ...
       copy:
         src: /home/stack/ansible/templates/zabbix-agent/custom/ceph/
         dest: /etc/zabbix/custom/
@@ -143,7 +150,7 @@
   hosts: ryu
   become: True
   tasks:
-    - name: copiando userparameters ryu ... 
+    - name: copiando userparameters ryu ...
       copy:
         src: /home/stack/ansible/templates/zabbix-agent/custom/ryu/
         dest: /etc/zabbix/custom/
@@ -180,7 +187,7 @@
         mode: "u=rwx,g=r,o=r"
       tags:
         - agora
-    
+
     - name: copiando sudoers file compute...
       copy:
         src: /home/stack/ansible/templates/zabbix-agent/sudoers.d/compute/
@@ -205,7 +212,7 @@
 
   handlers:
     - name: restart zabbix_agentd
-      service: 
+      service:
         name: zabbix-agent
-        state: restarted 
+        state: restarted
 
