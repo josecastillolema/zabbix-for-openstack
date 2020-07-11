@@ -13,7 +13,7 @@ In the following screenshot you can see the final result:
 
 As you can see, hosts are segregated by groups (controllers, compute, ceph, external Horizon, IdM, storage, etc.), and the items we monitore in each group are different.
 
-Some things we do monitor:
+## Monitor items
  - SNMP of the servers IPMI 
  - CPU (specially load above 30), memory (above 85% because of KSM), disk and network interfaces
  - Status of the network bonds 
@@ -36,7 +36,7 @@ Some things we do monitor:
  
 Some Zabbix user parameters needed modifications in standard SELinux policies in order to properly work.
  
-Besides this, we have another separated Zabbix server specifically to monitor capacity of the environment. In this second server we monitor:
+## Capacity monitoring
  - Number of virtual routers
  - Number of namespaces in the controller nodes
  - Number of virtual machines
