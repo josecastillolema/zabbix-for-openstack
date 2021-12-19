@@ -1,7 +1,6 @@
 ![GitHub](https://img.shields.io/github/license/josecastillolema/zabbix-for-openstack)
 ![GitHub language count](https://img.shields.io/github/languages/count/josecastillolema/zabbix-for-openstack)
 ![GitHub top language](https://img.shields.io/github/languages/top/josecastillolema/zabbix-for-openstack)
-[![Requirements Status](https://requires.io/github/josecastillolema/zabbix-for-openstack/requirements.svg?branch=master)](https://requires.io/github/josecastillolema/zabbix-for-openstack/requirements/?branch=master)
 ![Ansible Lint](https://github.com/josecastillolema/zabbix-for-openstack/workflows/Ansible%20Lint/badge.svg)
 
 
