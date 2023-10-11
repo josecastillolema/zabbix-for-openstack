@@ -47,5 +47,3 @@ Some Zabbix user parameters needed modifications in standard SELinux policies in
  - etc.
  
 The templates will surely need some customization work to adapt to each customer environment. They include an Ansible playbook to automate the Zabbix agent installation along with firewall liberations, sudoers file customizations, Zabbix user agents and corresponding scripts, SELinux policies, etc.
-
-I hope it helps.
